@@ -109,8 +109,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
             rabbitMqAdditionalServiceImageQueue,
             rabbitMqMemorialImageQueue,
             rabbitMqPortfolioMemorialImageQueue,
-            rabbitMqMaterialImageQueue,
-            sp.GetRequiredService<ILogger<RabbitMqBackgroundService>>()
+            rabbitMqMaterialImageQueue
         );
     });
 

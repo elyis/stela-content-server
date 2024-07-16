@@ -22,7 +22,6 @@ namespace STELA_CONTENT.Infrastructure.Service
         private readonly string _memorialImageQueue;
         private readonly string _portfolioMemorialImageQueue;
         private readonly string _materialImageQueue;
-        private readonly ILogger<RabbitMqBackgroundService> _logger;
 
         public RabbitMqBackgroundService(
             IServiceScopeFactory serviceFactory,
@@ -32,8 +31,7 @@ namespace STELA_CONTENT.Infrastructure.Service
             string additionalServiceImageQueue,
             string memorialImageQueue,
             string portfolioMemorialImageQueue,
-            string materialImageQueue,
-            ILogger<RabbitMqBackgroundService> logger)
+            string materialImageQueue)
         {
             _hostname = hostname;
             _userName = userName;
@@ -43,7 +41,6 @@ namespace STELA_CONTENT.Infrastructure.Service
             _memorialImageQueue = memorialImageQueue;
             _portfolioMemorialImageQueue = portfolioMemorialImageQueue;
             _materialImageQueue = materialImageQueue;
-            _logger = logger;
 
             InitializeRabbitMQ();
         }
@@ -124,18 +121,15 @@ namespace STELA_CONTENT.Infrastructure.Service
             var updateBody = JsonSerializer.Deserialize<T>(message);
             if (updateBody == null)
             {
-                _logger.LogError($"ProcessMessage: {message} is null");
                 return;
             }
 
             await updateFunc(contentDbContext, updateBody);
             await contentDbContext.SaveChangesAsync();
-            _logger.LogInformation($"ProcessMessage: {message} and save changes");
         }
 
         private async Task HandleAdditionalServiceImageAsync(string message)
         {
-            _logger.LogInformation($"HandleAdditionalServiceImageAsync: {message}");
             await ProcessMessage<AdditionalServiceUpdateImageBody>(message, async (db, body) =>
             {
                 var additionalService = await db.AdditionalServices.FindAsync(body.AdditionalServiceId);
@@ -146,7 +140,6 @@ namespace STELA_CONTENT.Infrastructure.Service
 
         private async Task HandlePortfolioMemorialUpdateImageAsync(string message)
         {
-            _logger.LogInformation($"HandlePortfolioMemorialUpdateImageAsync: {message}");
             await ProcessMessage<PortfolioMemorialUpdateImageBody>(message, async (db, body) =>
             {
                 var portfolioMemorial = await db.PortfolioMemorials.FindAsync(body.PortfolioMemorialId);
@@ -157,21 +150,16 @@ namespace STELA_CONTENT.Infrastructure.Service
 
         private async Task HandleMaterialUpdateImageAsync(string message)
         {
-            _logger.LogInformation($"HandleMaterialUpdateImageAsync: {message}");
             await ProcessMessage<MaterialImageBody>(message, async (db, body) =>
             {
                 var material = await db.Materials.FindAsync(body.MaterialId);
                 if (material != null)
                     material.Image = body.FileName;
-
-                else
-                    _logger.LogInformation($"HandleMaterialUpdateImageAsync: Material with id {body.MaterialId} not found");
             });
         }
 
         private async Task HandleMemorialUpdateImageAsync(string message)
         {
-            _logger.LogInformation($"HandleMemorialUpdateImageAsync: {message}");
             await ProcessMessage<MemorialUpdateImageBody>(message, async (db, body) =>
             {
                 var memorial = await db.Memorials.FindAsync(body.MemorialId);

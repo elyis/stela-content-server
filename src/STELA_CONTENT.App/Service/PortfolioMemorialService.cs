@@ -48,7 +48,8 @@ namespace STELA_CONTENT.App.Service
 
         public async Task<ServiceResponse<PortfolioMemorialBody>> Get(Guid id)
         {
-            var portfolioMemorial = await _context.PortfolioMemorials.FindAsync(id);
+            var portfolioMemorial = await _context.PortfolioMemorials.Include(e => e.Materials)
+                                                                     .FirstOrDefaultAsync(e => e.Id == id);
             if (portfolioMemorial == null)
             {
                 return new ServiceResponse<PortfolioMemorialBody>
@@ -67,7 +68,8 @@ namespace STELA_CONTENT.App.Service
 
         public async Task<ServiceResponse<PaginationResponse<ShortPortfolioMemorialBody>>> GetAll(int count, int offset)
         {
-            var portfolioMemorials = await _context.PortfolioMemorials.OrderBy(e => e.Name)
+            var portfolioMemorials = await _context.PortfolioMemorials.Include(e => e.Materials)
+                                                                      .OrderBy(e => e.Name)
                                                                       .Skip(offset)
                                                                       .Take(count)
                                                                       .ToListAsync();
