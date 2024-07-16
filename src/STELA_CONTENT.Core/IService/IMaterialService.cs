@@ -9,6 +9,6 @@ namespace STELA_CONTENT.Core.IService
         Task<HttpStatusCode> Create(CreateMemorialMaterialBody body);
         Task<ServiceResponse<MemorialMaterialBody>> Get(Guid id);
         Task<HttpStatusCode> Remove(Guid id);
-        Task<ServiceResponse<PaginationResponse<MemorialMaterialBody>>> GetAll(int offset, int count);
+        Task<ServiceResponse<PaginationResponse<MemorialMaterialBody>>> GetAll(int count, int offset);
     }
 }

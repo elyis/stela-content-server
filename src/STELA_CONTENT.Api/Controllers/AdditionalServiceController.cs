@@ -8,6 +8,8 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace STELA_CONTENT.Api.Controllers
 {
+    [ApiController]
+    [Route("api")]
     public class AdditionalServiceController : ControllerBase
     {
         private readonly IAdditionalServicesService _additionalServiceService;

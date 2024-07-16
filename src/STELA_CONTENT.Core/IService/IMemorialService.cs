@@ -7,6 +7,6 @@ namespace STELA_CONTENT.Core.IService
     {
         Task<ServiceResponse<MemorialBody>> Create(CreateMemorialBody body);
         Task<ServiceResponse<MemorialBody>> Get(Guid id);
-        Task<ServiceResponse<PaginationResponse<ShortMemorialBody>>> GetAll(int offset, int count);
+        Task<ServiceResponse<PaginationResponse<ShortMemorialBody>>> GetAll(int count, int offset);
     }
 }

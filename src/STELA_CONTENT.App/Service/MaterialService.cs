@@ -55,9 +55,10 @@ namespace STELA_CONTENT.App.Service
             };
         }
 
-        public async Task<ServiceResponse<PaginationResponse<MemorialMaterialBody>>> GetAll(int offset, int count)
+        public async Task<ServiceResponse<PaginationResponse<MemorialMaterialBody>>> GetAll(int count, int offset)
         {
-            var materials = await _context.Materials.Skip(offset)
+            var materials = await _context.Materials.OrderBy(m => m.Name)
+                                                    .Skip(offset)
                                                     .Take(count)
                                                     .ToListAsync();
 

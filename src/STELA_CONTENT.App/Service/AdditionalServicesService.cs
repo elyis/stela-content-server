@@ -49,7 +49,8 @@ namespace STELA_CONTENT.App.Service
 
         public async Task<ServiceResponse<IEnumerable<AdditionalServiceBody>>> GetAdditionalServices(int count, int offset)
         {
-            var services = await _context.AdditionalServices.Skip(offset)
+            var services = await _context.AdditionalServices.OrderBy(s => s.Name)
+                                                            .Skip(offset)
                                                             .Take(count)
                                                             .ToListAsync();
             return new ServiceResponse<IEnumerable<AdditionalServiceBody>>

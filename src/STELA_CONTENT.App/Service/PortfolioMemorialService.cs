@@ -65,9 +65,10 @@ namespace STELA_CONTENT.App.Service
             };
         }
 
-        public async Task<ServiceResponse<PaginationResponse<ShortPortfolioMemorialBody>>> GetAll(int offset, int count)
+        public async Task<ServiceResponse<PaginationResponse<ShortPortfolioMemorialBody>>> GetAll(int count, int offset)
         {
-            var portfolioMemorials = await _context.PortfolioMemorials.Skip(offset)
+            var portfolioMemorials = await _context.PortfolioMemorials.OrderBy(e => e.Name)
+                                                                      .Skip(offset)
                                                                       .Take(count)
                                                                       .ToListAsync();
             var totalCount = await _context.PortfolioMemorials.CountAsync();

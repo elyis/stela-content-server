@@ -5,7 +5,7 @@ namespace STELA_CONTENT.Core.IService
 {
     public interface IPortfolioMemorialService
     {
-        Task<ServiceResponse<PaginationResponse<ShortPortfolioMemorialBody>>> GetAll(int offset, int count);
+        Task<ServiceResponse<PaginationResponse<ShortPortfolioMemorialBody>>> GetAll(int count, int offset);
         Task<ServiceResponse<PortfolioMemorialBody>> Get(Guid id);
         Task<ServiceResponse<PortfolioMemorialBody>> Create(CreatePortfolioMemorialBody body);
     }

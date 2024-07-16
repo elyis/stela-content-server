@@ -109,7 +109,9 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
             rabbitMqAdditionalServiceImageQueue,
             rabbitMqMemorialImageQueue,
             rabbitMqPortfolioMemorialImageQueue,
-            rabbitMqMaterialImageQueue);
+            rabbitMqMaterialImageQueue,
+            sp.GetRequiredService<ILogger<RabbitMqBackgroundService>>()
+        );
     });
 
     services.AddScoped<IPlotPriceCalculationService, PlotPriceCalculationService>();
@@ -128,7 +130,7 @@ void ConfigureSwagger(IServiceCollection services)
         options.SwaggerDoc("v1", new OpenApiInfo
         {
             Version = "v1",
-            Title = "stela_api",
+            Title = "stela_content_api",
             Description = "Api",
         });
 
