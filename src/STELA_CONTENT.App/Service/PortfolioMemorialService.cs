@@ -11,10 +11,15 @@ namespace STELA_CONTENT.App.Service
     public class PortfolioMemorialService : IPortfolioMemorialService
     {
         private readonly ContentDbContext _context;
+        private readonly ICacheService _cacheService;
+        private const string _prefixKey = "portfolio_memorial_";
 
-        public PortfolioMemorialService(ContentDbContext context)
+        public PortfolioMemorialService(
+            ContentDbContext context,
+            ICacheService cacheService)
         {
             _context = context;
+            _cacheService = cacheService;
         }
 
         public async Task<ServiceResponse<PortfolioMemorialBody>> Create(CreatePortfolioMemorialBody body)
@@ -89,5 +94,7 @@ namespace STELA_CONTENT.App.Service
                 }
             };
         }
+
+        private string GetKey(string identifier) => $"{_prefixKey}{identifier}";
     }
 }

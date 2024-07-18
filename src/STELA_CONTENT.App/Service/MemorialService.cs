@@ -11,10 +11,12 @@ namespace STELA_CONTENT.App.Service
     public class MemorialService : IMemorialService
     {
         private readonly ContentDbContext _context;
+        private readonly ICacheService _cacheService;
 
-        public MemorialService(ContentDbContext context)
+        public MemorialService(ContentDbContext context, ICacheService cacheService)
         {
             _context = context;
+            _cacheService = cacheService;
         }
 
         public async Task<ServiceResponse<MemorialBody>> Create(CreateMemorialBody body)

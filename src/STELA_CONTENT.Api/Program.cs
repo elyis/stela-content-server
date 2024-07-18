@@ -64,6 +64,8 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     var rabbitMqPortfolioMemorialImageQueue = GetEnvVar("RABBITMQ_PORTFOLIO_MEMORIAL_IMAGE_QUEUE_NAME");
     var rabbitMqMaterialImageQueue = GetEnvVar("RABBITMQ_MATERIAL_IMAGE_QUEUE_NAME");
 
+    var redisConnectionString = GetEnvVar("REDIS_CONNECTION_STRING");
+
     services.AddControllers(e =>
     {
         e.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>();
@@ -96,6 +98,11 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
         options.UseNpgsql(contentDbConnectionString);
     });
 
+    services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = redisConnectionString;
+    });
+
 
     services.AddSingleton<IJwtService, JwtService>();
     services.AddSingleton<RabbitMqBackgroundService>(sp =>
@@ -112,6 +119,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
             rabbitMqMaterialImageQueue
         );
     });
+    services.AddSingleton<ICacheService, CacheService>();
 
     services.AddScoped<IPlotPriceCalculationService, PlotPriceCalculationService>();
     services.AddScoped<IMaterialService, MaterialService>();
