@@ -2,16 +2,17 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using STELA_CONTENT.Core.Entities.Request;
+using STELA_CONTENT.Core.IService;
 using STELA_CONTENT.Infrastructure.Data;
 
 namespace STELA_CONTENT.Infrastructure.Service
 {
     public class RabbitMqBackgroundService : BackgroundService
     {
+        private readonly ICacheService _cacheService;
         private IConnection _connection;
         private IModel _channel;
         private readonly IServiceScopeFactory _serviceFactory;
@@ -25,6 +26,7 @@ namespace STELA_CONTENT.Infrastructure.Service
 
         public RabbitMqBackgroundService(
             IServiceScopeFactory serviceFactory,
+            ICacheService cacheService,
             string hostname,
             string userName,
             string password,
@@ -41,6 +43,7 @@ namespace STELA_CONTENT.Infrastructure.Service
             _memorialImageQueue = memorialImageQueue;
             _portfolioMemorialImageQueue = portfolioMemorialImageQueue;
             _materialImageQueue = materialImageQueue;
+            _cacheService = cacheService;
 
             InitializeRabbitMQ();
         }
@@ -133,8 +136,12 @@ namespace STELA_CONTENT.Infrastructure.Service
             await ProcessMessage<AdditionalServiceUpdateImageBody>(message, async (db, body) =>
             {
                 var additionalService = await db.AdditionalServices.FindAsync(body.AdditionalServiceId);
-                if (additionalService != null)
+                if (additionalService != null){
                     additionalService.Image = body.FileName;
+
+                    var key = "additional_service_" + additionalService.Id;
+                    await _cacheService.SetCache(key, additionalService, TimeSpan.FromMinutes(0.5), TimeSpan.FromMinutes(2));
+                }
             });
         }
 
@@ -153,8 +160,12 @@ namespace STELA_CONTENT.Infrastructure.Service
             await ProcessMessage<MaterialImageBody>(message, async (db, body) =>
             {
                 var material = await db.Materials.FindAsync(body.MaterialId);
-                if (material != null)
+                if (material != null){
                     material.Image = body.FileName;
+
+                    var key = "material_" + material.Id;
+                    await _cacheService.SetCache(key, material, TimeSpan.FromMinutes(0.5), TimeSpan.FromMinutes(2));
+                }
             });
         }
 

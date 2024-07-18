@@ -110,6 +110,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
         var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
         return new RabbitMqBackgroundService(
             scopeFactory,
+            sp.GetRequiredService<ICacheService>(),
             rabbitMqHostname,
             rabbitMqUserName,
             rabbitMqPassword,
